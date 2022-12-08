@@ -333,25 +333,25 @@ def ultimate_case(map, P0x, P0y):
     try:
         if map[P0x + 1][P0y + 1]:
             cor = [P0x + 1, P0y + 1]
-        print('MOVE', str(cor[0]), str(cor[1]))
+        print('MOVE', str(cor[1]), str(cor[0]))
 
     except Exception as e:
         try:
             if map[P0x - 1][P0y - 1]:
                 cor = [P0x - 1, P0y - 1]
-            print('MOVE', str(cor[0]), str(cor[1]))
+            print('MOVE', str(cor[1]), str(cor[0]))
 
         except Exception as e:
             try:
                 if map[P0x + 1][P0y - 1]:
                     cor = [P0x + 1, P0y - 1]
-                print('MOVE', str(cor[0]), str(cor[1]))
+                print('MOVE', str(cor[1]), str(cor[0]))
     
             except Exception as e:
                 try:
                     if map[P0x - 1][P0y + 1]:
                         cor = [P0x - 1, P0y - 1]
-                    print('MOVE', str(cor[0]), str(cor[1]))
+                    print('MOVE', str(cor[1]), str(cor[0]))
                     
                 except Exception as e:
                     print('MOVE 0 0')
