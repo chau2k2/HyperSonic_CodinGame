@@ -38,7 +38,6 @@ def check_around(map, x, y, param_2):
     global_best_position = best_position
     global_best_dir = 'top'
 
-
     # If plant bomb on the right of box
     local_score = []
     for i in range(param_2):        
@@ -419,17 +418,17 @@ while True:
                 go_east(map, P0x, P0y, i, P0_1, P0_2)              
                 break
 
-            elif map[P0x - i][P0y] == '0' and P0x - i >= 0:
+            elif map[P0x - i][P0y] == '0' and P0x - 1 >= 0:
              
                 go_north(map, P0x, P0y, i, P0_1, P0_2)
                 break
 
-            elif map[P0x][P0y-i] == '0' and P0y - i >= 0:
+            elif map[P0x][P0y-i] == '0' and P0y - 1 >= 0:
 
                 go_west(map, P0x, P0y, i, P0_1, P0_2) 
                 break
 
-            elif map[P0x+i][P0y-i] == '0' and P0y - i >= 0:
+            elif map[P0x+i][P0y-i] == '0' and P0y - 1 >= 0:
                 go_south_west(map, P0x, P0y, i, P0_2)
                 break
 
@@ -437,11 +436,11 @@ while True:
                 go_south_east(map, P0x, P0y, i, P0_2)
                 break
 
-            elif map[P0x-i][P0y+i] == '0' and P0x - i >= 0:
+            elif map[P0x-i][P0y+i] == '0' and P0x - 1 >= 0:
                 go_north_east(map, P0x, P0y, i, P0_2)
                 break
 
-            elif map[P0x-i][P0y-i] == '0' and P0x - i >= 0 and P0y - i >= 0:
+            elif map[P0x-i][P0y-i] == '0' and P0x - 1 >= 0 and P0y - 1 >= 0:
                 go_north_west(map, P0x, P0y, i, P0_2)
                 break
 
@@ -454,16 +453,16 @@ while True:
                     go_south(map, P0x, P0y, i, P0_1, P0_2)               
                     break
 
-                elif map[P0x - i][P0y] == '0' and P0x - i >= 0:
+                elif map[P0x - i][P0y] == '0' and P0x - 1 >= 0:
                     go_west(map, P0x, P0y, i, P0_1, P0_2) 
                     break
 
-                elif map[P0x][P0y-i] == '0' and P0y - i >= 0:
+                elif map[P0x][P0y-i] == '0' and P0y - 1 >= 0:
                    
                     go_north(map, P0x, P0y, i, P0_1, P0_2) 
                     break
 
-                elif map[P0x+i][P0y-i] == '0' and P0y - i >= 0:
+                elif map[P0x+i][P0y-i] == '0' and P0y - 1 >= 0:
                     
                     go_north_east(map, P0x, P0y, i, P0_2)
                     break
@@ -473,12 +472,12 @@ while True:
                     go_south_east(map, P0x, P0y, i, P0_2)
                     break
 
-                elif map[P0x-i][P0y+i] == '0' and P0x - i >= 0:
+                elif map[P0x-i][P0y+i] == '0' and P0x - 1 >= 0:
                     
                     go_south_west(map, P0x, P0y, i, P0_2)
                     break
 
-                elif map[P0x-i][P0y-i] == '0' and P0x - i >= 0 and P0y - i >= 0:
+                elif map[P0x-i][P0y-i] == '0' and P0x - 1 >= 0 and P0y - 1 >= 0:
                     
                     go_north_west(map, P0x, P0y, i, P0_2)
                     break
@@ -489,17 +488,17 @@ while True:
                 print(exc_type, fname, exc_tb.tb_lineno, file=sys.stderr)
 
                 try:
-                    if map[P0x - i][P0y] == '0' and P0x - i >= 0:
+                    if map[P0x - i][P0y] == '0' and P0x - 1 >= 0:
                         
                         go_west(map, P0x, P0y, i, P0_1, P0_2) 
                         break
 
-                    elif map[P0x][P0y-i] == '0' and P0y - i >= 0:
+                    elif map[P0x][P0y-i] == '0' and P0y - 1 >= 0:
                        
                         go_north(map, P0x, P0y, i, P0_1, P0_2) 
                         break
 
-                    elif map[P0x+i][P0y-i] == '0' and P0y - i >= 0:
+                    elif map[P0x+i][P0y-i] == '0' and P0y - 1 >= 0:
                         
                         go_north_east(map, P0x, P0y, i, P0_2)
                         break
@@ -509,12 +508,12 @@ while True:
                         go_south_east(map, P0x, P0y, i, P0_2)
                         break
 
-                    elif map[P0x-i][P0y+i] == '0' and P0x - i >= 0:
+                    elif map[P0x-i][P0y+i] == '0' and P0x - 1 >= 0:
                         
                         go_south_west(map, P0x, P0y, i, P0_2)
                         break
 
-                    elif map[P0x-i][P0y-i] == '0' and P0x - i >= 0 and P0y - i >= 0:
+                    elif map[P0x-i][P0y-i] == '0' and P0x - 1 >= 0 and P0y - 1 >= 0:
                         
                         go_north_west(map, P0x, P0y, i, P0_2)
                         break
@@ -524,12 +523,12 @@ while True:
                     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
                     print(exc_type, fname, exc_tb.tb_lineno, file=sys.stderr)
                     try:
-                        if map[P0x][P0y-i] == '0' and P0y - i >= 0:
+                        if map[P0x][P0y-i] == '0' and P0y - 1 >= 0:
                            
                             go_north(map, P0x, P0y, i, P0_1, P0_2) 
                             break
 
-                        elif map[P0x+i][P0y-i] == '0' and P0y - i >= 0:
+                        elif map[P0x+i][P0y-i] == '0' and P0y - 1 >= 0:
                             
                             go_north_east(map, P0x, P0y, i, P0_2)
                             break
@@ -539,12 +538,12 @@ while True:
                             go_south_east(map, P0x, P0y, i, P0_2)
                             break
 
-                        elif map[P0x-i][P0y+i] == '0' and P0x - i >= 0:
+                        elif map[P0x-i][P0y+i] == '0' and P0x - 1 >= 0:
                             
                             go_south_west(map, P0x, P0y, i, P0_2)
                             break
 
-                        elif map[P0x-i][P0y-i] == '0' and P0x - i >= 0 and P0y - i >= 0:
+                        elif map[P0x-i][P0y-i] == '0' and P0x - 1 >= 0 and P0y - 1 >= 0:
                             
                             go_north_west(map, P0x, P0y, i, P0_2)
                             break
@@ -554,7 +553,7 @@ while True:
                         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
                         print(exc_type, fname, exc_tb.tb_lineno, file=sys.stderr)
                         try:
-                            if map[P0x+i][P0y-i] == '0' and P0y - i >= 0:
+                            if map[P0x+i][P0y-i] == '0' and P0y - 1 >= 0:
                                 
                                 go_north_east(map, P0x, P0y, i, P0_2)
                                 break
@@ -564,12 +563,12 @@ while True:
                                 go_south_east(map, P0x, P0y, i, P0_2)
                                 break
 
-                            elif map[P0x-i][P0y+i] == '0' and P0x - i >= 0:
+                            elif map[P0x-i][P0y+i] == '0' and P0x - 1 >= 0:
                                 
                                 go_south_west(map, P0x, P0y, i, P0_2)
                                 break
 
-                            elif map[P0x-i][P0y-i] == '0' and P0x - i >= 0 and P0y - i >= 0:
+                            elif map[P0x-i][P0y-i] == '0' and P0x - 1 >= 0 and P0y - 1 >= 0:
                                 
                                 go_north_west(map, P0x, P0y, i, P0_2)
                                 break
@@ -584,12 +583,12 @@ while True:
                                     go_south_east(map, P0x, P0y, i, P0_2)
                                     break
 
-                                elif map[P0x-i][P0y+i] == '0' and P0x - i >= 0:
+                                elif map[P0x-i][P0y+i] == '0' and P0x - 1 >= 0:
                                     
                                     go_south_west(map, P0x, P0y, i, P0_2)
                                     break
 
-                                elif map[P0x-i][P0y-i] == '0' and P0x - i >= 0 and P0y - i >= 0:
+                                elif map[P0x-i][P0y-i] == '0' and P0x - 1 >= 0 and P0y - 1 >= 0:
                                     
                                     go_north_west(map, P0x, P0y, i, P0_2)
                                     break
@@ -599,12 +598,12 @@ while True:
                                 fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
                                 print(exc_type, fname, exc_tb.tb_lineno, file=sys.stderr)
                                 try:
-                                    if map[P0x-i][P0y+i] == '0' and P0x - i >= 0:
+                                    if map[P0x-i][P0y+i] == '0' and P0x - 1 >= 0:
                                         
                                         go_south_west(map, P0x, P0y, i, P0_2)
                                         break
 
-                                    elif map[P0x-i][P0y-i] == '0' and P0x - i >= 0 and P0y - i >= 0:
+                                    elif map[P0x-i][P0y-i] == '0' and P0x - 1 >= 0 and P0y - 1 >= 0:
                                         
                                         go_north_west(map, P0x, P0y, i, P0_2)
                                         break
@@ -614,7 +613,7 @@ while True:
                                     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
                                     print(exc_type, fname, exc_tb.tb_lineno, file=sys.stderr)
                                     try:
-                                        if map[P0x-i][P0y-i] == '0' and P0x - i >= 0 and P0y - i >= 0:
+                                        if map[P0x-i][P0y-i] == '0' and P0x - 1 >= 0 and P0y - 1 >= 0:
                                             
                                             go_north_west(map, P0x, P0y, i, P0_2)
                                             break
