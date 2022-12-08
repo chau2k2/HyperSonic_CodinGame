@@ -5,12 +5,20 @@ import os
 # Code map[x][y] with x is Vertical  axis,  y is Horizontal axis
 # Move map[x][y] with x is Horizontal axis, y is Vertical axis
 
+global boxes_will_be_exploded
+boxes_will_be_exploded = []
+
 def input_data():
     map = []
     for i in range(height):
         row = input()
         row = [*row]
         map.append(row)
+
+    for cordinate in boxes_will_be_exploded:
+        x, y = cordinate[0], cordinate[1]
+        map[x][y] = '.'
+
 
     entities = int(input())
     for i in range(entities):
@@ -35,6 +43,8 @@ def input_data():
             map[x][y] = 'ER' + str(owner)
         elif entity_type == 2 and param_1 == 2:
             map[x][y] = 'EB' + str(owner)    
+
+
 
     print(np.array(map),file=sys.stderr)
 
@@ -64,21 +74,24 @@ def check_around(map, x, y, param_2):
         else:
             try:
                 if map[bomb_position_x][y] :
+                    flag = [0, 0, 0]
                     for j in range(1, param_2):
                         # Now we will simulate if we plant the bomb at 'j' distance from the box 
                         # then how many box will explode
-
-                        if map[bomb_position_x][y - j] in ['0','1','2'] and y - j >= 0:
+                        if map[bomb_position_x][y - j] in ['0','1','2'] and y - j and flag[0] == 0 >= 0:
                             # to the left
                             box_exploded += 1 
 
-                        if map[bomb_position_x][y + j] in ['0','1','2']:
+                        if map[bomb_position_x][y + j] in ['0','1','2'] and flag[1] == 0:
                             # to the right
                             box_exploded += 1
 
-                        if map[bomb_position_x - j][y] in ['0','1','2']:
+                        if map[bomb_position_x - j][y] in ['0','1','2'] and flag[2] == 0:
                             # to the top
                             box_exploded += 1
+                        
+                        if flag == [1, 1, 1]:
+                            break
 
                     local_score.append(box_exploded)
             except Exception as e:
@@ -87,7 +100,7 @@ def check_around(map, x, y, param_2):
     best_position = local_score.index(max(local_score))
     best_score = max(local_score)
 
-    print('top', local_score, file=sys.stderr)
+    # print('top', local_score, file=sys.stderr)
 
     global_best_score = best_score
     global_best_position = best_position + 1
@@ -114,19 +127,23 @@ def check_around(map, x, y, param_2):
         else:
             try:
                 if map[x][bomb_position_y]:
+                    flag = [0, 0, 0]
                     for j in range(1, param_2):
                         # Now we will simulate if we plant the bomb at 'j' distance from the box 
                         # then how many box will explode
 
-                        if map[x - j][bomb_position_y] in ['0','1','2'] and x - j >= 0:
+                        if map[x - j][bomb_position_y] in ['0','1','2'] and x - j >= 0 and flag[0] == 0:
                             # to the top 
                             box_exploded += 1 
-                        if map[x + j][bomb_position_y] in ['0','1','2']:
+                        if map[x + j][bomb_position_y] in ['0','1','2'] and flag[1] == 0:
                             # to the bottom
                             box_exploded += 1
-                        if map[x][bomb_position_y + j] in ['0','1','2']:
+                        if map[x][bomb_position_y + j] in ['0','1','2'] and flag[2] == 0:
                             # to the right
                             box_exploded += 1
+                        if flag == [1, 1, 1]:
+                            break
+                        
                     local_score.append(box_exploded)
 
             except Exception as e:
@@ -135,7 +152,7 @@ def check_around(map, x, y, param_2):
     best_position = local_score.index(max(local_score))
     best_score = max(local_score)
     
-    print('right', local_score, file=sys.stderr)
+    # print('right', local_score, file=sys.stderr)
 
     if global_best_score < best_score:
             global_best_score = best_score
@@ -162,18 +179,22 @@ def check_around(map, x, y, param_2):
         
             try:
                 if map[bomb_position_x][y]:
+                    flag = [0, 0, 0]
                     for j in range(1, param_2):
                         # Now we will simulate if we plant the bomb at 'j' distance from the box 
                         # then how many box will explode
-                        if map[bomb_position_x][y - j] in ['0','1','2'] and y - j >= 0:
+                        if map[bomb_position_x][y - j] in ['0','1','2'] and y - j >= 0 and flag[0] == 0 :
                             # to the left
                             box_exploded += 1 
-                        if map[bomb_position_x ][y + j] in ['0','1','2']:
+                        if map[bomb_position_x ][y + j] in ['0','1','2'] and flag[1] == 0:
                             # to the right
                             box_exploded += 1
-                        if map[bomb_position_x + j][y] in ['0','1','2']:
+                        if map[bomb_position_x + j][y] in ['0','1','2'] and flag[2] == 0:
                             # to the bottom
                             box_exploded += 1
+                        if flag == [1, 1, 1]:
+                            break
+                        
                     local_score.append(box_exploded)
             except Exception as e:
                 local_score.append(-1)
@@ -181,7 +202,7 @@ def check_around(map, x, y, param_2):
     best_position = local_score.index(max(local_score))
     best_score = max(local_score)
 
-    print('bottom', local_score, file=sys.stderr)
+    # print('bottom', local_score, file=sys.stderr)
 
     if global_best_score < best_score:
             global_best_score = best_score
@@ -196,7 +217,7 @@ def check_around(map, x, y, param_2):
         bomb_position_y = y - i
 
         try:
-            if map[bomb_position_x][y] in ['0','1','2']:
+            if map[x][bomb_position_y] in ['0','1','2']:
                 local_score.append(-10)
                 break
         except IndexError:
@@ -229,7 +250,7 @@ def check_around(map, x, y, param_2):
     best_position = local_score.index(max(local_score))
     best_score = max(local_score)
 
-    print('left', local_score, file=sys.stderr)
+    # print('left', local_score, file=sys.stderr)
 
     if global_best_score < best_score:
             global_best_score = best_score
@@ -237,6 +258,32 @@ def check_around(map, x, y, param_2):
             global_best_dir = 'left'
     
     return [global_best_score, global_best_position, global_best_dir]
+
+def check_damage(map, x, y, param_2):
+    flag = [0, 0, 0, 0] # for marking if box of which direction has exploded
+    for i in range(1, param_2):
+        if map[x + i][y] in ['0','1','2'] and flag[0] == 0:
+            # Start from South 
+            boxes_will_be_exploded.append([x+i, y])
+            flag[0] = 1
+
+        if map[x][y + i] in ['0','1','2'] and flag[1] == 0:
+            # To East 
+            boxes_will_be_exploded.append([x, y+i])
+            flag[1] = 1
+
+        if map[x - i][y] in ['0','1','2'] and flag[2] == 0:
+            # To North 
+            boxes_will_be_exploded.append([x-i, y])
+            flag[2] = 1
+
+        if map[x][y - i] in ['0','1','2'] and flag[3] == 0:
+            # End with West 
+            boxes_will_be_exploded.append([x, y-i])
+            flag[3] = 1
+
+        if flag == [1,1,1,1]:
+            break 
 
 def go_east(map, P0x, P0y, i, P0_1, P0_2):
     print('East', file=sys.stderr)  
@@ -268,14 +315,12 @@ def go_east(map, P0x, P0y, i, P0_1, P0_2):
             data =  input_data()
             P0x, P0y = data[1], data[2]
         else:
-            if P0_1 != 0:
+            if P0_1 >= 0:
                 action = 'BOMB'
+                check_damage(map, cor[0], cor[1], P0_2)
                 print(action, str(cor[1]), str(cor[0]))
                 # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
-            elif P0_1 == 0:
-                action = 'BOMB'
-                print(action, str(cor[1]), str(cor[0]))
-                # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+
 
 def go_south(map, P0x, P0y, i, P0_1, P0_2):
     print('South', file=sys.stderr)
@@ -308,14 +353,12 @@ def go_south(map, P0x, P0y, i, P0_1, P0_2):
             P0x, P0y = data[1], data[2]
             
         else:
-            if P0_1 != 0:
+            if P0_1 >= 0:
                 action = 'BOMB'
+                check_damage(map, cor[0], cor[1], P0_2)
                 print(action, str(cor[1]), str(cor[0]))
                 # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
-            elif P0_1 ==0:
-                action = 'BOMB'
-                print(action, str(cor[1]), str(cor[0]))
-                # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+
 
 def go_west(map, P0x, P0y, i, P0_1, P0_2) :
     print('West', file=sys.stderr)
@@ -345,18 +388,15 @@ def go_west(map, P0x, P0y, i, P0_1, P0_2) :
             action = 'MOVE'
             print(action, str(cor[1]), str(cor[0]))
             # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
-            distance_to_box -= 1
             data =  input_data()
             P0x, P0y = data[1], data[2]
         else:
-            if P0_1 != 0:
+            if P0_1 >= 0:
                 action = 'BOMB'
+                check_damage(map, cor[0], cor[1], P0_2)
                 print(action, str(cor[1]), str(cor[0]))
                 # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
-            elif P0_1 ==0:
-                action = 'BOMB'
-                print(action, str(cor[1]), str(cor[0]))
-                # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+
 
 def go_north(map, P0x, P0y, i, P0_1, P0_2) :
     print('North', file=sys.stderr)
@@ -375,8 +415,6 @@ def go_north(map, P0x, P0y, i, P0_1, P0_2) :
     elif best_dir == 'left':
         cor = [P0x - i, P0y - best_cor]
     
-    distance_to_box = abs(cor[0] - P0x) + abs(cor[1] - P0y)
-
     if [P0x, P0y] == cor and P0_1 != 0:
         action = 'BOMB'
         print(action, str(cor[1]), str(cor[0]))
@@ -387,18 +425,15 @@ def go_north(map, P0x, P0y, i, P0_1, P0_2) :
             action = 'MOVE'
             print(action, str(cor[1]), str(cor[0]))
             # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
-            distance_to_box -= 1
             data =  input_data()
             P0x, P0y = data[1], data[2]
         else:
-            if P0_1 != 0:
+            if P0_1 >= 0:
                 action = 'BOMB'
+                check_damage(map, cor[0], cor[1], P0_2)
                 print(action, str(cor[1]), str(cor[0]))
                 # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
-            elif P0_1 ==0:
-                action = 'BOMB'
-                print(action, str(cor[1]), str(cor[0]))
-                # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+
 
 def go_north_east(map, P0x, P0y, i, P0_2) :
     print('North East', file=sys.stderr)
@@ -428,18 +463,15 @@ def go_north_east(map, P0x, P0y, i, P0_2) :
             action = 'MOVE'
             print(action, str(cor[1]), str(cor[0]))
             # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
-            distance_to_box -= 1
             data =  input_data()
             P0x, P0y = data[1], data[2]
         else:
-            if P0_1 != 0:
+            if P0_1 >= 0:
                 action = 'BOMB'
                 print(action, str(cor[1]), str(cor[0]))
-                print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
-            elif P0_1 ==0:
-                action = 'BOMB'
-                print(action, str(cor[1]), str(cor[0]))
+                check_damage(map, cor[0], cor[1], P0_2)
                 # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+
 
 def go_south_east(map, P0x, P0y, i, P0_2) :
     print('South East', file=sys.stderr)
@@ -463,24 +495,18 @@ def go_south_east(map, P0x, P0y, i, P0_2) :
         # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
         return
     else:
-        count = 0 
         while [P0x, P0y] != cor:
-            print('count', count, file=sys.stderr)
-            count += 1
             action = 'MOVE'
             print(action, str(cor[1]), str(cor[0]))
             # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
             data =  input_data()
             P0x, P0y = data[1], data[2]
         else:
-            if P0_1 != 0:
+            if P0_1 >= 0:
                 action = 'BOMB'
+                check_damage(map, cor[0], cor[1], P0_2)
                 print(action, str(cor[1]), str(cor[0]))
-                print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
-            elif P0_1 ==0:
-                action = 'BOMB'
-                print(action, str(cor[1]), str(cor[0]))
-                # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+
 
 def go_south_west(map, P0x, P0y, i, P0_2) :
     print('South West', file=sys.stderr)
@@ -503,7 +529,6 @@ def go_south_west(map, P0x, P0y, i, P0_2) :
     if [P0x, P0y] == cor and P0_1 != 0:
         action = 'BOMB'
         print(action, str(cor[1]), str(cor[0]))
-        print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
         return
     else:
         while [P0x, P0y] != cor:
@@ -513,14 +538,12 @@ def go_south_west(map, P0x, P0y, i, P0_2) :
             data =  input_data()
             P0x, P0y = data[1], data[2]
         else:
-            if P0_1 != 0:
+            if P0_1 >= 0:
                 action = 'BOMB'
+                check_damage(map, cor[0], cor[1], P0_2)
                 print(action, str(cor[1]), str(cor[0]))
                 # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
-            elif P0_1 ==0:
-                action = 'BOMB'
-                print(action, str(cor[1]), str(cor[0]))
-                print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+
     
 def go_north_west(map, P0x, P0y, i, P0_2) :
     print('North West', file=sys.stderr)
@@ -553,14 +576,12 @@ def go_north_west(map, P0x, P0y, i, P0_2) :
             data =  input_data()
             P0x, P0y = data[1], data[2]
         else:
-            if P0_1 != 0:
+            if P0_1 >= 0:
                 action = 'BOMB'
+                check_damage(map, cor[0], cor[1], P0_2)
                 print(action, str(cor[1]), str(cor[0]))
                 # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
-            elif P0_1 ==0:
-                action = 'BOMB'
-                print(action, str(cor[1]), str(cor[0]))
-                # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+
 
 def ultimate_case(map, P0x, P0y):
     print('UC', file=sys.stderr)
@@ -596,17 +617,9 @@ width, height, my_id = [int(i) for i in input().split()]
 
 # game loop
 
-boxes_will_be_exploded = []
 while True:
     
     map, P0x, P0y, P0_1, P0_2 = input_data()
-
-    map = np.array(map)
-
-    # print(np.array(map), file=sys.stderr)
-
-    action = 'MOVE'
-    cor = [P0x, P0y]
 
     radius = 1
 
