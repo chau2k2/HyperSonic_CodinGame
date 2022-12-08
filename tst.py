@@ -32,21 +32,16 @@ def input_data():
 
         elif entity_type == 1:
             map[x][y] = 'B' + str(owner)
+            check_damage(map, x, y, param_2)
 
         elif entity_type == 0:
             map[x][y] = 'P' + str(owner)
-
-        elif entity_type == 1:
-            map[x][y] = 'B' + str(owner) 
         
         elif entity_type == 2 and param_1 == 1:
             map[x][y] = 'ER' + str(owner)
+
         elif entity_type == 2 and param_1 == 2:
             map[x][y] = 'EB' + str(owner)    
-
-
-
-    print(np.array(map),file=sys.stderr)
 
     return [map, P0x, P0y, P0_1, P0_2]
 
@@ -262,14 +257,20 @@ def check_around(map, x, y, param_2):
 def check_damage(map, x, y, param_2):
     flag = [0, 0, 0, 0] # for marking if box of which direction has exploded
     for i in range(1, param_2):
-        if map[x + i][y] in ['0','1','2'] and flag[0] == 0:
-            # Start from South 
-            boxes_will_be_exploded.append([x+i, y])
+        try:
+            if map[x + i][y] in ['0','1','2'] and flag[0] == 0:
+                # Start from South 
+                boxes_will_be_exploded.append([x+i, y])
+                flag[0] = 1
+        except IndexError:
             flag[0] = 1
 
-        if map[x][y + i] in ['0','1','2'] and flag[1] == 0:
-            # To East 
-            boxes_will_be_exploded.append([x, y+i])
+        try: 
+            if map[x][y + i] in ['0','1','2'] and flag[1] == 0:
+                # To East 
+                boxes_will_be_exploded.append([x, y+i])
+                flag[1] = 1
+        except IndexError:
             flag[1] = 1
 
         if map[x - i][y] in ['0','1','2'] and flag[2] == 0 and x - i >= 0:
@@ -317,7 +318,7 @@ def go_east(map, P0x, P0y, i, P0_1, P0_2):
         else:
             if P0_1 >= 0:
                 action = 'BOMB'
-                check_damage(map, cor[0], cor[1], P0_2)
+                
                 print(action, str(cor[1]), str(cor[0]))
                 # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
 
@@ -348,16 +349,14 @@ def go_south(map, P0x, P0y, i, P0_1, P0_2):
         while [P0x, P0y] != cor:
             action = 'MOVE'
             print(action, str(cor[1]), str(cor[0]))
-            # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+            print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
             data =  input_data()
-            P0x, P0y = data[1], data[2]
-            
+            P0x, P0y = data[1], data[2]     
         else:
             if P0_1 >= 0:
-                action = 'BOMB'
-                check_damage(map, cor[0], cor[1], P0_2)
+                action = 'BOMB'                
                 print(action, str(cor[1]), str(cor[0]))
-                # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+                print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
 
 
 def go_west(map, P0x, P0y, i, P0_1, P0_2) :
@@ -393,7 +392,7 @@ def go_west(map, P0x, P0y, i, P0_1, P0_2) :
         else:
             if P0_1 >= 0:
                 action = 'BOMB'
-                check_damage(map, cor[0], cor[1], P0_2)
+                
                 print(action, str(cor[1]), str(cor[0]))
                 # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
 
@@ -430,7 +429,7 @@ def go_north(map, P0x, P0y, i, P0_1, P0_2) :
         else:
             if P0_1 >= 0:
                 action = 'BOMB'
-                check_damage(map, cor[0], cor[1], P0_2)
+                
                 print(action, str(cor[1]), str(cor[0]))
                 # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
 
@@ -469,7 +468,7 @@ def go_north_east(map, P0x, P0y, i, P0_2) :
             if P0_1 >= 0:
                 action = 'BOMB'
                 print(action, str(cor[1]), str(cor[0]))
-                check_damage(map, cor[0], cor[1], P0_2)
+                
                 # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
 
 
@@ -506,7 +505,7 @@ def go_south_east(map, P0x, P0y, i, P0_2) :
         else:
             if P0_1 >= 0:
                 action = 'BOMB'
-                check_damage(map, cor[0], cor[1], P0_2)
+                
                 print(action, str(cor[1]), str(cor[0]))
 
 
@@ -542,7 +541,7 @@ def go_south_west(map, P0x, P0y, i, P0_2) :
         else:
             if P0_1 >= 0:
                 action = 'BOMB'
-                check_damage(map, cor[0], cor[1], P0_2)
+                
                 print(action, str(cor[1]), str(cor[0]))
                 # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
 
@@ -580,7 +579,7 @@ def go_north_west(map, P0x, P0y, i, P0_2) :
         else:
             if P0_1 >= 0:
                 action = 'BOMB'
-                check_damage(map, cor[0], cor[1], P0_2)
+                
                 print(action, str(cor[1]), str(cor[0]))
                 # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
 
@@ -607,6 +606,7 @@ width, height, my_id = [int(i) for i in input().split()]
 while True:
     
     map, P0x, P0y, P0_1, P0_2 = input_data()
+    print(np.array(map), file=sys.stderr)
 
     radius = 1
 
