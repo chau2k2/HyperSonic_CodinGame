@@ -1,0 +1,633 @@
+import sys
+import math
+import numpy as np
+import os
+
+def check_around(map, x, y, param_2):
+    '''
+    return a list of best score, best position from the box and best direction
+    '''
+    # If plant bomb on the top of box
+    local_score = []
+    for i in range(param_2):        
+        box_exploded = 0
+        bomb_position_x = x + i
+        try:
+            if map[bomb_position_x][x]:
+                for j in range(param_2):
+                    # Now we will simulate if we plant the bomb at 'j' distance from the box 
+                    # then how many box will explode
+                    if map[bomb_position_x - j][y] == '0':
+                        # to the left
+                        box_exploded += 1 
+                    if map[bomb_position_x + j ][y] == '0':
+                        # to the right
+                        box_exploded += 1
+                    if map[bomb_position_x][y - j] == '0':
+                        # to the top
+                        box_exploded += 1
+                local_score.append(box_exploded)
+        except Exception as e:
+            local_score.append(-1)
+
+    best_position = local_score.index(max(local_score))
+    best_score = max(local_score)
+    pack = [best_position, best_score]
+
+    global_best_score = best_score
+    global_best_position = best_position
+    global_best_dir = 'top'
+
+
+    # If plant bomb on the right of box
+    local_score = []
+    for i in range(param_2):        
+        box_exploded = 0
+        bomb_position_y = y + i
+        try:
+            if map[x][bomb_position_y]:
+                for j in range(param_2):
+                    # Now we will simulate if we plant the bomb at 'j' distance from the box 
+                    # then how many box will explode
+                    if map[x][bomb_position_y - j] == '0':
+                        # to the top 
+                        box_exploded += 1 
+                    if map[x][bomb_position_y + j ] == '0':
+                        # to the bottom
+                        box_exploded += 1
+                    if map[x + j][bomb_position_y] == '0':
+                        # to the right
+                        box_exploded += 1
+                local_score.append(box_exploded)
+        except Exception as e:
+            local_score.append(-1)
+
+    best_position = local_score.index(max(local_score))
+    best_score = max(local_score)
+    pack = [best_position, best_score]
+    # global_score_dict.update({'right': pack})
+    if global_best_score < best_score:
+            global_best_score = best_score
+            global_best_position = best_position
+            global_best_dir = 'right'
+
+
+    # If plant bomb on the bottom of box
+    local_score = []
+    for i in range(param_2):        
+        box_exploded = 0
+        bomb_position_x = x - i
+        try:
+            if map[bomb_position_x][x]:
+                for j in range(param_2):
+                    # Now we will simulate if we plant the bomb at 'j' distance from the box 
+                    # then how many box will explode
+                    if map[bomb_position_x - j][y] == '0':
+                        # to the left
+                        box_exploded += 1 
+                    if map[bomb_position_x + j][y] == '0':
+                        # to the right
+                        box_exploded += 1
+                    if map[bomb_position_x][y + j] == '0':
+                        # to the bottom
+                        box_exploded += 1
+                local_score.append(box_exploded)
+        except Exception as e:
+            local_score.append(-1)
+
+    best_position = local_score.index(max(local_score))
+    best_score = max(local_score)
+    pack = [best_position, best_score]
+    if global_best_score < best_score:
+            global_best_score = best_score
+            global_best_position = best_position
+            global_best_dir = 'bottom'
+
+
+    # if plant bomb on the left of box
+    local_score = []
+    for i in range(param_2):        
+        box_exploded = 0
+        bomb_position_y = y - i
+        try:
+            if map[x][bomb_position_y]:
+                for j in range(param_2):
+                    # Now we will simulate if we plant the bomb at 'j' distance from the box 
+                    # then how many box will explode
+                    if map[x][bomb_position_y - j] == '0':
+                        # to the top 
+                        box_exploded += 1 
+                    if map[x][bomb_position_y + j] == '0':
+                        # to the bottom
+                        box_exploded += 1
+                    if map[x - j][bomb_position_y] == '0':
+                        # to the left
+                        box_exploded += 1
+                local_score.append(box_exploded)
+        except Exception as e:
+            local_score.append(-1)
+
+    best_position = local_score.index(max(local_score))
+    best_score = max(local_score)
+    if global_best_score < best_score:
+            global_best_score = best_score
+            global_best_position = best_position
+            global_best_dir = 'left'
+    
+    return [global_best_score, global_best_position, global_best_dir]
+
+def go_east(map, P0x, P0y, i, P0_1, P0_2):
+    print('East', file=sys.stderr)
+
+    result = check_around(map, P0x, P0y+i, P0_2)
+    best_score = result[0]
+    distance_to_box = i
+
+    best_cor = result[1]
+    best_dir = result[2]
+
+    if best_dir == 'top':
+        cor = [P0x, P0y + i - best_cor]
+    elif best_dir == 'right':
+        cor = [P0x + best_cor, P0y + i]
+    elif best_dir == 'bottom':
+        cor = [P0x, P0y+ i + best_cor]
+    elif best_dir == 'left':
+        cor = [P0x - best_cor, P0y + i ]
+    
+    if distance_to_box in range(P0_2) and P0_1 == 1:
+        action = 'BOMB'
+    else: 
+        action = 'MOVE'
+    print(action, str(cor[1]), str(cor[0]))
+    print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+
+def go_south(map, P0x, P0y, i, P0_1, P0_2):
+    print('South', file=sys.stderr)
+
+    result = check_around(map, P0x+i, P0y, P0_2)
+    best_score = result[0]
+    distance_to_box = i
+    best_cor = result[1]
+    best_dir = result[2]
+
+    if best_dir == 'top':
+        cor = [P0x + i, P0y - best_cor]
+    elif best_dir == 'right':
+        cor = [P0x + i + best_cor, P0y]
+    elif best_dir == 'bottom':
+        cor = [P0x + i, P0y + best_cor]
+    elif best_dir == 'left':
+        cor = [P0x + i - best_cor, P0y]
+    
+    if distance_to_box in range(P0_2) and P0_1 == 1:
+        action = 'BOMB'
+    else: 
+        action = 'MOVE'
+    print(action, str(cor[1]), str(cor[0]))
+    print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+
+def go_west(map, P0x, P0y, i, P0_1, P0_2) :
+    print('West', file=sys.stderr)
+    result = check_around(map, P0x, P0y-i, P0_2)
+    best_score = result[0]
+    distance_to_box = i
+
+    best_cor = result[1]
+    best_dir = result[2]
+
+    if best_dir == 'top':
+        cor = [P0x, P0y - i - best_cor]
+    elif best_dir == 'right':
+        cor = [P0x + best_cor, P0y - i]
+    elif best_dir == 'bottom':
+        cor = [P0x, P0y - i + best_cor]
+    elif best_dir == 'left':
+        cor = [P0x - best_cor, P0y - i ]
+    
+    if distance_to_box in range(P0_2) and P0_1 == 1:
+        action = 'BOMB'
+    else: 
+        action = 'MOVE'
+    print(action, str(cor[1]), str(cor[0]))
+    print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+
+def go_north(map, P0x, P0y, i, P0_1, P0_2) :
+    print('North', file=sys.stderr)
+
+    result = check_around(map, P0x - i, P0y, P0_2)
+    best_score = result[0]
+    distance_to_box = i
+
+    best_cor = result[1]
+    best_dir = result[2]
+
+    if best_dir == 'top':
+        cor = [P0x - i, P0y - best_cor]
+    elif best_dir == 'right':
+        cor = [P0x - i + best_cor, P0y]
+    elif best_dir == 'bottom':
+        cor = [P0x - i, P0y + best_cor]
+    elif best_dir == 'left':
+        cor = [P0x - i - best_cor, P0y]
+    
+    if distance_to_box in range(P0_2) and P0_1 == 1:
+        action = 'BOMB'
+    else: 
+        action = 'MOVE'
+    print(action, str(cor[1]), str(cor[0]))
+    print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+
+def go_north_east(map, P0x, P0y, i, P0_2) :
+    print('North East', file=sys.stderr)
+    result = check_around(map, P0x - i, P0y + i, P0_2)
+    best_score = result[0]
+    distance_to_box = i
+
+    best_cor = result[1]
+    best_dir = result[2]
+
+    if best_dir == 'top':
+        cor = [P0x - i, P0y + i - best_cor]
+    elif best_dir == 'right':
+        cor = [P0x - i + best_cor, P0y + i]
+    elif best_dir == 'bottom':
+        cor = [P0x - i, P0y + i + best_cor]
+    elif best_dir == 'left':
+        cor = [P0x - i - best_cor, P0y + i]
+    
+
+    action = 'MOVE'
+    print(action, str(cor[1]), str(cor[0]))
+    print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+
+def go_south_east(map, P0x, P0y, i, P0_2) :
+    print('South East', file=sys.stderr)
+    result = check_around(map, P0x+i, P0y+i, P0_2)
+    best_score = result[0]
+    distance_to_box = i
+
+    best_cor = result[1]
+    best_dir = result[2]
+
+    if best_dir == 'top':
+        cor = [P0x + i, P0y + i - best_cor]
+    elif best_dir == 'right':
+        cor = [P0x + i + best_cor, P0y + i]
+    elif best_dir == 'bottom':
+        cor = [P0x + i, P0y + i + best_cor]
+    elif best_dir == 'left':
+        cor = [P0x + i - best_cor, P0y + i ]
+    
+
+    action = 'MOVE'
+    print(action, str(cor[1]), str(cor[0]))
+    print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+
+def go_south_west(map, P0x, P0y, i, P0_2) :
+    print('South West', file=sys.stderr)
+
+    result = check_around(map, P0x+i, P0y-i, P0_2)
+    best_score = result[0]
+    distance_to_box = i * 2
+
+    best_cor = result[1]
+    best_dir = result[2]
+
+    if best_dir == 'top':
+        cor = [P0x + i, P0y - i - best_cor]
+    elif best_dir == 'right':
+        cor = [P0x + i + best_cor, P0y - i]
+    elif best_dir == 'bottom':
+        cor = [P0x + i, P0y - i + best_cor]
+    elif best_dir == 'left':
+        cor = [P0x + i - best_cor, P0y - i]
+    
+
+    action = 'MOVE'
+    print(action, str(cor[1]), str(cor[0]))
+    print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+    
+def go_north_west(map, P0x, P0y, i, P0_2) :
+    print('North West', file=sys.stderr)
+
+    result = check_around(map, P0x - i, P0y - i, P0_2)
+    best_score = result[0]
+    distance_to_box = i
+
+    best_cor = result[1]
+    best_dir = result[2]
+
+    if best_dir == 'top':
+        cor = [P0x - i, P0y - i - best_cor]
+    elif best_dir == 'right':
+        cor = [P0x - i + best_cor, P0y - i]
+    elif best_dir == 'bottom':
+        cor = [P0x - i, P0y - i + best_cor]
+    elif best_dir == 'left':
+        cor = [P0x - i - best_cor, P0y - i]
+    
+
+    action = 'MOVE'
+    print(action, str(cor[1]), str(cor[0]))
+    print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+
+def ultimate_case(map, P0x, P0y):
+    print('UC', file=sys.stderr)
+
+    try:
+        if map[P0x + 1][P0y + 1]:
+            cor = [P0x + 1, P0y + 1]
+        print('MOVE', str(cor[0]), str(cor[1]))
+
+    except Exception as e:
+        try:
+            if map[P0x - 1][P0y - 1]:
+                cor = [P0x - 1, P0y - 1]
+            print('MOVE', str(cor[0]), str(cor[1]))
+
+        except Exception as e:
+            try:
+                if map[P0x + 1][P0y - 1]:
+                    cor = [P0x + 1, P0y - 1]
+                print('MOVE', str(cor[0]), str(cor[1]))
+    
+            except Exception as e:
+                try:
+                    if map[P0x - 1][P0y + 1]:
+                        cor = [P0x - 1, P0y - 1]
+                    print('MOVE', str(cor[0]), str(cor[1]))
+                    
+                except Exception as e:
+                    print('MOVE 0 0')
+                    
+
+width, height, my_id = [int(i) for i in input().split()]
+
+#######################################################
+
+
+# game loop
+
+count = 0
+
+### note: MOVE 3 2 MEAN 3 AS X AND 2 AS Y
+### but in the code, we address backward
+
+while True:
+    
+    map = []
+    for i in range(height):
+        row = input()
+        row = [*row]
+        map.append(row)
+
+    entities = int(input())
+    for i in range(entities):
+        entity_type, owner, y, x, param_1, param_2 = [int(j) for j in input().split()]
+        print('entity', entity_type, owner, y, x, param_1, param_2, file=sys.stderr)
+        if entity_type == 0 and owner == 0:
+            map[x][y] = 'P' + str(owner)
+            P0x, P0y = x, y
+            P0_1 = param_1
+            P0_2 = param_2
+
+        elif entity_type == 1:
+            map[x][y] = 'B' + str(owner)
+
+        elif entity_type == 0:
+            map[x][y] = 'P' + str(owner)
+
+        elif entity_type == 1 and owner == 1:
+            map[x][y] = 'B' + str(owner) 
+
+    # print(np.array(map), file=sys.stderr)
+    map = np.array(map)
+
+    action = 'MOVE'
+    cor = [P0x, P0y]
+
+    radius = 1
+
+    while True:        
+        i = radius
+
+        print(i, file=sys.stderr)
+
+        try:
+            if map[P0x + i][P0y] == '0':                   
+                go_south(map, P0x, P0y, i, P0_1, P0_2)             
+                break
+
+            elif map[P0x][P0y+i] == '0':
+                go_east(map, P0x, P0y, i, P0_1, P0_2)              
+                break
+
+            elif map[P0x - i][P0y] == '0' and P0x - i >= 0:
+             
+                go_north(map, P0x, P0y, i, P0_1, P0_2)
+                break
+
+            elif map[P0x][P0y-i] == '0' and P0y - i >= 0:
+
+                go_west(map, P0x, P0y, i, P0_1, P0_2) 
+                break
+
+            elif map[P0x+i][P0y-i] == '0' and P0y - i >= 0:
+                go_south_west(map, P0x, P0y, i, P0_2)
+                break
+
+            elif map[P0x + i][P0y + i] == '0':
+                go_south_east(map, P0x, P0y, i, P0_2)
+                break
+
+            elif map[P0x-i][P0y+i] == '0' and P0x - i >= 0:
+                go_north_east(map, P0x, P0y, i, P0_2)
+                break
+
+            elif map[P0x-i][P0y-i] == '0':
+                go_north_west(map, P0x, P0y, i, P0_2)
+                break
+
+        except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(exc_type, fname, exc_tb.tb_lineno, file=sys.stderr)
+            try:
+                if map[P0x][P0y+i] == '0':
+                    go_south(map, P0x, P0y, i, P0_1, P0_2)               
+                    break
+
+                elif map[P0x - i][P0y] == '0':
+                    go_west(map, P0x, P0y, i, P0_1, P0_2) 
+                    break
+
+                elif map[P0x][P0y-i] == '0':
+                   
+                    go_north(map, P0x, P0y, i, P0_1, P0_2) 
+                    break
+
+                elif map[P0x+i][P0y-i] == '0':
+                    
+                    go_north_east(map, P0x, P0y, i, P0_2)
+                    break
+
+                elif map[P0x + i][P0y + i] == '0':
+                    
+                    go_south_east(map, P0x, P0y, i, P0_2)
+                    break
+
+                elif map[P0x-i][P0y+i] == '0':
+                    
+                    go_south_west(map, P0x, P0y, i, P0_2)
+                    break
+
+                elif map[P0x-i][P0y-i] == '0':
+                    
+                    go_north_west(map, P0x, P0y, i, P0_2)
+                    break
+
+            except Exception as e:
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                print(exc_type, fname, exc_tb.tb_lineno, file=sys.stderr)
+
+                try:
+                    if map[P0x - i][P0y] == '0':
+                        
+                        go_west(map, P0x, P0y, i, P0_1, P0_2) 
+                        break
+
+                    elif map[P0x][P0y-i] == '0':
+                       
+                        go_north(map, P0x, P0y, i, P0_1, P0_2) 
+                        break
+
+                    elif map[P0x+i][P0y-i] == '0':
+                        
+                        go_north_east(map, P0x, P0y, i, P0_2)
+                        break
+
+                    elif map[P0x + i][P0y + i] == '0':
+                        
+                        go_south_east(map, P0x, P0y, i, P0_2)
+                        break
+
+                    elif map[P0x-i][P0y+i] == '0':
+                        
+                        go_south_west(map, P0x, P0y, i, P0_2)
+                        break
+
+                    elif map[P0x-i][P0y-i] == '0':
+                        
+                        go_north_west(map, P0x, P0y, i, P0_2)
+                        break
+
+                except Exception as e:
+                    exc_type, exc_obj, exc_tb = sys.exc_info()
+                    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                    print(exc_type, fname, exc_tb.tb_lineno, file=sys.stderr)
+                    try:
+                        if map[P0x][P0y-i] == '0':
+                           
+                            go_north(map, P0x, P0y, i, P0_1, P0_2) 
+                            break
+
+                        elif map[P0x+i][P0y-i] == '0':
+                            
+                            go_north_east(map, P0x, P0y, i, P0_2)
+                            break
+
+                        elif map[P0x + i][P0y + i] == '0':
+                            
+                            go_south_east(map, P0x, P0y, i, P0_2)
+                            break
+
+                        elif map[P0x-i][P0y+i] == '0':
+                            
+                            go_south_west(map, P0x, P0y, i, P0_2)
+                            break
+
+                        elif map[P0x-i][P0y-i] == '0':
+                            
+                            go_north_west(map, P0x, P0y, i, P0_2)
+                            break
+
+                    except Exception as e:
+                        exc_type, exc_obj, exc_tb = sys.exc_info()
+                        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                        print(exc_type, fname, exc_tb.tb_lineno, file=sys.stderr)
+                        try:
+                            if map[P0x+i][P0y-i] == '0':
+                                
+                                go_north_east(map, P0x, P0y, i, P0_2)
+                                break
+
+                            elif map[P0x + i][P0y + i] == '0':
+                                
+                                go_south_east(map, P0x, P0y, i, P0_2)
+                                break
+
+                            elif map[P0x-i][P0y+i] == '0':
+                                
+                                go_south_west(map, P0x, P0y, i, P0_2)
+                                break
+
+                            elif map[P0x-i][P0y-i] == '0':
+                                
+                                go_north_west(map, P0x, P0y, i, P0_2)
+                                break
+
+                        except Exception as e:
+                            exc_type, exc_obj, exc_tb = sys.exc_info()
+                            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                            print(exc_type, fname, exc_tb.tb_lineno, file=sys.stderr)
+                            try:
+                                if map[P0x + i][P0y + i] == '0':
+                                    
+                                    go_south_east(map, P0x, P0y, i, P0_2)
+                                    break
+
+                                elif map[P0x-i][P0y+i] == '0':
+                                    
+                                    go_south_west(map, P0x, P0y, i, P0_2)
+                                    break
+
+                                elif map[P0x-i][P0y-i] == '0':
+                                    
+                                    go_north_west(map, P0x, P0y, i, P0_2)
+                                    break
+
+                            except Exception as e:
+                                exc_type, exc_obj, exc_tb = sys.exc_info()
+                                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                                print(exc_type, fname, exc_tb.tb_lineno, file=sys.stderr)
+                                try:
+                                    if map[P0x-i][P0y+i] == '0':
+                                        
+                                        go_south_west(map, P0x, P0y, i, P0_2)
+                                        break
+
+                                    elif map[P0x-i][P0y-i] == '0':
+                                        
+                                        go_north_west(map, P0x, P0y, i, P0_2)
+                                        break
+
+                                except Exception as e:
+                                    exc_type, exc_obj, exc_tb = sys.exc_info()
+                                    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                                    print(exc_type, fname, exc_tb.tb_lineno, file=sys.stderr)
+                                    try:
+                                        if map[P0x-i][P0y-i] == '0':
+                                            
+                                            go_north_west(map, P0x, P0y, i, P0_2)
+                                            break
+
+                                    except Exception as e:
+                                        exc_type, exc_obj, exc_tb = sys.exc_info()
+                                        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                                        print(exc_type, fname, exc_tb.tb_lineno, file=sys.stderr)
+                                        ultimate_case(map, P0x, P0y)
+                                        break
+        radius += 1
+        
