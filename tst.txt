@@ -23,8 +23,8 @@ def input_data():
     entities = int(input())
     for i in range(entities):
         entity_type, owner, y, x, param_1, param_2 = [int(j) for j in input().split()]
-        # print('entity', entity_type, owner, y, x, param_1, param_2, file=sys.stderr)
-        if entity_type == 0 and owner == 0:
+        print('entity', entity_type, owner, y, x, param_1, param_2, file=sys.stderr)
+        if entity_type == 0 and owner == my_id:
             map[x][y] = 'P' + str(owner)
             P0x, P0y = x, y
             P0_1 = param_1
@@ -474,7 +474,9 @@ def go_north_east(map, P0x, P0y, i, P0_2) :
 
 
 def go_south_east(map, P0x, P0y, i, P0_2) :
-    print('South East', file=sys.stderr)
+    print('South East', P0x+i, P0y+i, file=sys.stderr)
+
+
     result = check_around(map, P0x+i, P0y+i, P0_2)
 
     best_cor = result[1]
@@ -498,7 +500,7 @@ def go_south_east(map, P0x, P0y, i, P0_2) :
         while [P0x, P0y] != cor:
             action = 'MOVE'
             print(action, str(cor[1]), str(cor[0]))
-            # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
+            print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
             data =  input_data()
             P0x, P0y = data[1], data[2]
         else:
@@ -613,7 +615,9 @@ def ultimate_case(map, P0x, P0y):
                     print('MOVE 0 0')
                     
 #####################################################################################################################
+global my_id
 width, height, my_id = [int(i) for i in input().split()]
+
 
 # game loop
 
