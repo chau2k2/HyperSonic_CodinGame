@@ -6,9 +6,14 @@ import os
 # Move map[x][y] with x is Horizontal axis, y is Vertical axis
 
 global boxes_will_be_exploded
+'''
+The list contains all the boxes that will be exploded right after
+the bomb has been planted 
+'''
 boxes_will_be_exploded = []
 
 def input_data():
+    # Take input from server
     map = []
     for i in range(height):
         row = input()
@@ -24,6 +29,9 @@ def input_data():
     for i in range(entities):
         entity_type, owner, y, x, param_1, param_2 = [int(j) for j in input().split()]
         print('entity', entity_type, owner, y, x, param_1, param_2, file=sys.stderr)
+        
+
+        # The next following code blocks will encode the map with Player Position, Bomb and Buffs
         if entity_type == 0 and owner == my_id:
             map[x][y] = 'P' + str(owner)
             P0x, P0y = x, y
@@ -47,7 +55,15 @@ def input_data():
 
 def check_around(map, x, y, param_2):
     '''
-    return a list of best score, best position from the box and best direction
+    Input: map, Cordinate of the box and range of bomb (aka bomb damage)
+    Output:  list of best score, best position from the box and best direction
+    The func will simulate if we plant the bomb on 4 ways (North, East, South, West)
+    from the bombs, which direction will be optimized, also the distance from the bomb also
+    For example:  1 . 1
+                  . . 1
+                  . O .
+                  . . .
+        Solution, plant on North side and 2 blocks away from the box (O)
     '''
     # If plant bomb on the top of box
     local_score = []
@@ -93,7 +109,9 @@ def check_around(map, x, y, param_2):
                 local_score.append(-1)
 
     best_position = local_score.index(max(local_score))
+    # best position will get index of best score among the j position
     best_score = max(local_score)
+    
 
     # print('top', local_score, file=sys.stderr)
 
@@ -255,6 +273,12 @@ def check_around(map, x, y, param_2):
     return [global_best_score, global_best_position, global_best_dir]
 
 def check_damage(map, x, y, param_2):
+    '''
+    Input: map, cordinate of the bomb, range of the bomb aka bomb damage
+    Output: all the boxes that will be exploded right after the bomb has been planted
+    The function will check if any boxes will be exploded right after the bomb has been 
+    planted and append them to boxed_will_be_exploded list 
+    '''
     flag = [0, 0, 0, 0] # for marking if box of which direction has exploded
     for i in range(1, param_2):
         try:
@@ -287,6 +311,16 @@ def check_damage(map, x, y, param_2):
             break 
 
 def go_east(map, P0x, P0y, i, P0_1, P0_2):
+    '''
+    Input: map, cordinate of box, radius, Bomb available, Bomb Dmg
+    Output: 'None'
+    All the function with go will have the same format and have the same algorithm:
+    1) Check the optimized cordinate to plant to the bomb around the box
+    2) Get that cordinate
+    3) If the Player is out of reach to that cordinate then Program will loop until Player get there and Bomb
+    4) After planting the bomb, Program will check the boxes damaged by the bomb and delete that boxes immidiately 
+    '''
+
     print('East', file=sys.stderr)  
 
     result = check_around(map, P0x, P0y+i, P0_2)
@@ -584,6 +618,8 @@ def go_north_west(map, P0x, P0y, i, P0_2) :
                 # print(action, str(cor[1]), str(cor[0]), file=sys.stderr)
 
 def ultimate_case(map, P0x, P0y):
+    # This case only happen when all option above are unavailable
+    # The func will move Player to the top and move left or right to scan
     print('UC', file=sys.stderr)
 
     while [P0x, P0y] != [0, P0y]:
@@ -610,7 +646,11 @@ while True:
 
     radius = 1
 
-    while True:        
+    while True:   
+        '''
+        We will scan the whole enviroment around Player Position
+        with 8 direction: N, E, S, W, NE, SE, SW, NW
+        '''     
         i = radius
 
         print('radius', i, file=sys.stderr)
