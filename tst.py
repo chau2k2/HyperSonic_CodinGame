@@ -72,7 +72,7 @@ def check_around(map, x, y, param_2):
         bomb_position_x = x - i
 
         try:
-            if map[bomb_position_x][y] in ['0','1','2']:
+            if map[bomb_position_x][y] in ['0','1','2', 'x']:
                 local_score.append(-10)
                 break
         except IndexError:
@@ -89,17 +89,25 @@ def check_around(map, x, y, param_2):
                     for j in range(1, param_2):
                         # Now we will simulate if we plant the bomb at 'j' distance from the box 
                         # then how many box will explode
-                        if map[bomb_position_x][y - j] in ['0','1','2'] and y - j and flag[0] == 0 >= 0:
+                        if map[bomb_position_x][y - j] in ['0','1','2'] and y - j >= 0 and flag[0] == 0:
                             # to the left
                             box_exploded += 1 
+                            flag[0] = 1
+
+                        elif map[bomb_position_x][y - j] == 'x' and y - j >= 0  and flag[0] == 0:
+                            flag[0] = 1
 
                         if map[bomb_position_x][y + j] in ['0','1','2'] and flag[1] == 0:
                             # to the right
                             box_exploded += 1
+                        elif map[bomb_position_x][y + j] == 'x' and flag[1] == 0:
+                            flag[1] = 1
 
-                        if map[bomb_position_x - j][y] in ['0','1','2'] and flag[2] == 0:
+                        if map[bomb_position_x - j][y] in ['0','1','2'] and bomb_position_x - j >= 0 and flag[2] == 0:
                             # to the top
                             box_exploded += 1
+                        elif map[bomb_position_x - j][y] == 'x' and bomb_position_x - j >= 0 and flag[2] == 0:
+                            flag[2] = 1
                         
                         if flag == [1, 1, 1]:
                             break
@@ -127,7 +135,7 @@ def check_around(map, x, y, param_2):
         bomb_position_y = y + i
         
         try:
-            if map[x][bomb_position_y] in ['0','1','2']:
+            if map[x][bomb_position_y] in ['0','1','2', 'x']:
                 local_score.append(-10)
                 break
         except IndexError:
@@ -148,12 +156,24 @@ def check_around(map, x, y, param_2):
                         if map[x - j][bomb_position_y] in ['0','1','2'] and x - j >= 0 and flag[0] == 0:
                             # to the top 
                             box_exploded += 1 
+                            flag[0] = 1
+                        elif map[x - j][bomb_position_y] == 'x' and x - j >= 0 and flag[0] == 0:
+                            flag[0] = 1
+
                         if map[x + j][bomb_position_y] in ['0','1','2'] and flag[1] == 0:
                             # to the bottom
                             box_exploded += 1
+                            flag[1] = 1
+                        elif map[x + j][bomb_position_y] == 'x' and flag[1] == 0:
+                            flag[1] = 1
+
                         if map[x][bomb_position_y + j] in ['0','1','2'] and flag[2] == 0:
                             # to the right
                             box_exploded += 1
+                            flag[2] = 1
+                        elif map[x][bomb_position_y + j] == 'x' and flag[2] == 0:
+                            flag[2] = 1
+
                         if flag == [1, 1, 1]:
                             break
                         
@@ -178,7 +198,7 @@ def check_around(map, x, y, param_2):
         box_exploded = 0
         bomb_position_x = x + i
         try:
-            if map[bomb_position_x][y] in ['0','1','2']:
+            if map[bomb_position_x][y] in ['0','1','2', 'x']:
                 local_score.append(-10)
                 break
         except IndexError:
@@ -199,12 +219,24 @@ def check_around(map, x, y, param_2):
                         if map[bomb_position_x][y - j] in ['0','1','2'] and y - j >= 0 and flag[0] == 0 :
                             # to the left
                             box_exploded += 1 
-                        if map[bomb_position_x ][y + j] in ['0','1','2'] and flag[1] == 0:
+                            flag[0] = 1
+                        elif map[bomb_position_x][y - j] == 'x' and flag[0] == 0:
+                            flag[0] = 1
+
+                        if map[bomb_position_x][y + j] in ['0','1','2'] and flag[1] == 0:
                             # to the right
                             box_exploded += 1
+                            flag[1] = 1
+                        elif map[bomb_position_x][y + j] == 'x' and flag[1] == 0:
+                            flag[1] = 1
+
                         if map[bomb_position_x + j][y] in ['0','1','2'] and flag[2] == 0:
                             # to the bottom
                             box_exploded += 1
+                            flag[2] = 1
+                        elif map[bomb_position_x + j][y] == 'x' and flag[2] == 0:
+                            flag[2] =1
+
                         if flag == [1, 1, 1]:
                             break
                         
@@ -244,18 +276,31 @@ def check_around(map, x, y, param_2):
         else:
             try:
                 if map[x][bomb_position_y]:
+                    flag = [0, 0, 0]
                     for j in range(1, param_2):
                         # Now we will simulate if we plant the bomb at 'j' distance from the box 
                         # then how many box will explode
-                        if map[x - j][bomb_position_y] in ['0','1','2'] and x - j >= 0:
+                        if map[x - j][bomb_position_y] in ['0','1','2'] and x - j >= 0 and flag[0] == 0:
                             # to the top 
                             box_exploded += 1 
-                        if map[x + j][bomb_position_y] in ['0','1','2']:
+                            flag[0] = 1
+                        elif map[x - j][bomb_position_y] == 'x' and flag[0] == 0:
+                            flag[0] = 1
+                        
+                        if map[x + j][bomb_position_y] in ['0','1','2'] and flag[1] == 0:
                             # to the bottom
                             box_exploded += 1
-                        if map[x][bomb_position_y - j] in ['0','1','2']:
+                            flag[1] = 1 
+                        elif map[x + j][bomb_position_y] == 'x' and flag[1] == 0:
+                            flag[1] = 1 
+                        
+                        if map[x][bomb_position_y - j] in ['0','1','2'] and bomb_position_y - j >= 0 and flag[2] == 0:
                             # to the left
                             box_exploded += 1
+                            flag[2] = 1
+                        elif map[x][bomb_position_y - j] == 'x' and flag[2] == 0:
+                            flag[2] = 1
+
                     local_score.append(box_exploded)
             except Exception as e:
                 local_score.append(-1)
